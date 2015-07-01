@@ -1,15 +1,19 @@
+use std::iter;
 use std::io::*;
 use std::net::TcpStream;
+// use std::fmt::Write;
 
 fn main() {
 	let mut stream = TcpStream::connect("irc.freenode.net:6667").unwrap();
 
-	stream.write_all(b"NICK skript_kitty\r\n");
-	stream.write_all(b"USER skript_kitty skript_kitty skript_kitty :meow\r\n");
-	stream.write_all(b"JOIN #pbsideachannel\r\n");
+	let name = "skript_kitty";
+	let channel = "#pbsideachannel";
+
+	stream.write_all(format!("NICK {n}\r\n", n = name).as_bytes());
+	stream.write_all(format!("USER {n} {n} {n} :meow\r\n", n = name).as_bytes());
+	stream.write_all(format!("JOIN {c}\r\n", c = channel).as_bytes());
 
 	let mut read_head = BufReader::new(stream);
-	// let mut take = String::new();
 	while true {
 		let mut take = String::new();
 		read_head.read_line(&mut take);
