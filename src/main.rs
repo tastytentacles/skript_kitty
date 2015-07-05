@@ -1,10 +1,7 @@
-
-
-// use std::iter;
 use std::io::*;
 use std::net::TcpStream;
-use std::path::Path;
-use std::fs::File;
+// use std::path::Path;
+// use std::fs::File;
 
 fn main() {
 	let mut stream :TcpStream = TcpStream::connect("irc.freenode.net:6667").unwrap();
@@ -18,7 +15,7 @@ fn main() {
 	let _ = stream.write_all(format!("JOIN {c}\r\n", c = channel).as_bytes());
 
 	// let log_path = Path::new("log.txt");
-	//
+
 	// let mut log_file = match File::create(&log_path) {
 	// 	Err(why) => (panic!("error {}", why)),
 	// 	Ok(log_file) => log_file,
@@ -32,14 +29,18 @@ fn main() {
 		let mut take = String::new();
 		read_head.read_line(&mut take).unwrap();
 
-		// println!("{}", take);
+		println!("{}", take);
 		// let _ = log_file.write_all(take.as_bytes());
-		info!("{}", take);
 
 		if take.contains("go to sleep") {
 			send_msg(&mut write_head, "ok going to sleep", channel);
 			break;
 		}
+
+		// unsafe {
+		// 	let v: Vec<(usize, usize)> = take.match_indices(":_256Q!").collect();
+		// 	println!("{}", v[0].0);
+		// }
 
 		// if check_pm(take, "test") {
 		// 	// send_msg(stream, "yah that worked", channel);
@@ -48,9 +49,24 @@ fn main() {
 	}
 }
 
-// fn parse_type() -> u16 {
-//
-// }
+fn grep_string(s: String, t: String) -> i32 {
+	let mut sv: Vec<char> = s.chars().collect();
+	let mut tv: Vec<char> = s.chars().collect();
+	let mut hits: Vec<u32>;
+
+	for n in 0..sv.len() {
+		if sv[n] == tv[n] {
+			hits.push(n);
+		}
+	}
+
+	for n in 0..hits.len() {
+		let mut test = String::new()
+		for n2 in 0..tv.len() {
+			
+		}
+	}
+}
 
 fn send_msg(s: &mut BufWriter<TcpStream>, msg: &str, channel: &str) {
 	s.write_all(format!("PRIVMSG {c} :{m}\r\n", c = channel, m = msg).as_bytes()).unwrap();
