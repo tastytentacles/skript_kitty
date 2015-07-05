@@ -27,12 +27,11 @@ fn main() {
 			let _ = write_head.flush();
 		}
 
-		if msg_contains(take, "go to sleep") {
+		if msg_contains(&take, "go to sleep") {
 			msg_send(&mut write_head, "ok I am off to sleep", channel);
-			break;
-		}
+			break; }
 
-		if msg_contains(take, "hello")
+		if msg_contains(&take, "hello")
 			{ msg_send(&mut write_head, "hello", channel); }
 	}
 }
@@ -43,7 +42,7 @@ fn msg_send(s: &mut BufWriter<TcpStream>, msg: &str, channel: &str) {
 	s.flush().unwrap();
 }
 
-fn msg_contains(s: String, t: &str) -> bool {
+fn msg_contains(s: &String, t: &str) -> bool {
 	let frac: Vec<&str> = s.splitn(4, " ").collect();
 
 	if frac.len() != 4 { return false; }
