@@ -32,61 +32,36 @@ fn main() {
 		println!("{}", take);
 		// let _ = log_file.write_all(take.as_bytes());
 
+		if take.starts_with("PING") {
+			write_head.write_all("PONG: nope".as_bytes());
+			write_head.flush();
+		}
+
 		if take.contains("go to sleep") {
-			send_msg(&mut write_head, "ok going to sleep", channel);
+			msg_send(&mut write_head, "ok going to sleep", channel);
 			break;
 		}
 
-		// unsafe {
-		// 	let v: Vec<(usize, usize)> = take.match_indices(":_256Q!").collect();
-		// 	println!("{}", v[0].0);
-		// }
-
-		// if check_pm(take, "test") {
-		// 	// send_msg(stream, "yah that worked", channel);
-		// 	println!("yah that worked");
-		// }
-	}
-}
-
-fn grep_string(s: String, t: String) -> i32 {
-	let mut sv: Vec<char> = s.chars().collect();
-	let mut tv: Vec<char> = s.chars().collect();
-	let mut hits: Vec<u32>;
-
-	for n in 0..sv.len() {
-		if sv[n] == tv[n] {
-			hits.push(n);
-		}
-	}
-
-	for n in 0..hits.len() {
-		let mut test = String::new()
-		for n2 in 0..tv.len() {
-			
+		if msg_contains(take, "test") {
+			println!("cats though");
 		}
 	}
 }
 
-fn send_msg(s: &mut BufWriter<TcpStream>, msg: &str, channel: &str) {
+fn msg_send(s: &mut BufWriter<TcpStream>, msg: &str, channel: &str) {
 	s.write_all(format!("PRIVMSG {c} :{m}\r\n", c = channel, m = msg).as_bytes()).unwrap();
 	s.flush().unwrap();
 }
 
-// fn check_pm(t: String, msg: &str) -> bool {
-// 	let mut tick_list = false;
-//
-// 	let read_stack: Vec<&str> = t.splitn(4, " ").collect();
-// 	if read_stack.len() == 4 {
-// 		if read_stack[1].contains(" PRIVMSG ") {
-// 			if read_stack[3].contains(msg) {
-// 				tick_list = true;
-// 			}
-// 		}
-// 	}
-// 	else {
-// 		tick_list = false;
-// 	}
-//
-// 	return tick_list;
-// }
+fn msg_contains(s: String, t: &str) -> bool {
+	let mut out = false;
+	let frac: Vec<&str> = s.splitn(4, " ").collect();
+	// let msg: String = ;
+
+	if frac.len() != 4 { return false; }
+	if frac[1] == "PRIVMSG" &&
+	 	String::from_utf8_lossy(frac[3].as_bytes()).contains(t){
+		return true;
+	}
+	else { return false; }
+}
