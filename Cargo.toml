@@ -2,3 +2,6 @@
 name = "skript_kitty"
 version = "0.1.0"
 authors = ["q <marq46.steam@googlemail.com>"]
+
+[dependencies]
+log = "0.3"

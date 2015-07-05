@@ -1,3 +1,5 @@
+
+
 // use std::iter;
 use std::io::*;
 use std::net::TcpStream;
@@ -30,8 +32,9 @@ fn main() {
 		let mut take = String::new();
 		read_head.read_line(&mut take).unwrap();
 
-		println!("{}", take);
+		// println!("{}", take);
 		// let _ = log_file.write_all(take.as_bytes());
+		info!("{}", take);
 
 		if take.contains("go to sleep") {
 			send_msg(&mut write_head, "ok going to sleep", channel);
