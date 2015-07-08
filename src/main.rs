@@ -21,6 +21,7 @@ fn main() {
 
 		println!("{}", take);
 
+		// ---------------------------------- # PING #
 		if take.starts_with("PING") {
 			let _ = client.write.write_all("PONG: nope".as_bytes());
 			let _ = client.write.flush();
@@ -36,6 +37,8 @@ fn main() {
 			{ msg_send(&mut client.write, "hello"); }
 	}
 }
+
+
 
 fn msg_send(s: &mut BufWriter<TcpStream>, msg: &str) {
 	s.write_all(format!("PRIVMSG {c} :{m}\r\n",
@@ -53,6 +56,8 @@ fn msg_contains(s: &String, t: &str) -> bool {
 	}
 	else { return false; }
 }
+
+
 
 fn irc_new(url :&str) -> IRC {
 	let tcp = TcpStream::connect(url).unwrap();
