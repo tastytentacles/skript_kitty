@@ -1,19 +1,16 @@
+mod irc_h;
+
 use std::io::*;
 use std::net::TcpStream;
 
 
-struct IRC {
-	stream :TcpStream,
-	read :BufReader<TcpStream>,
-	write :BufWriter<TcpStream>
-}
-
-static NAME :&'static str = "skript_kitty";
-static CHANNEL :&'static str = "#testingsnoopyq";
-
 fn main() {
-	let mut client = irc_new("irc.freenode.net:6667");
-	irc_join(&mut client);
+	let mut client_data_v = Vec::new();
+	client_data_v.push("#testingsnoopyq");
+	let client_data = irc_h::ClientData { name :"skript_kitty", channel :client_data_v };
+
+	let mut client = irc_h::irc_new("irc.freenode.net:6667");
+	irc_h::irc_join(&mut client, &client_data);
 
 	loop {
 		let mut take = String::new();
@@ -29,20 +26,20 @@ fn main() {
 
 		// ---------------------------------- # kill command #
 		if msg_contains(&take, "go to sleep") {
-			msg_send(&mut client.write, "ok I am off to sleep");
+			msg_send(&mut client.write, &client_data, "ok I am off to sleep");
 			break; }
 
 		// ---------------------------------- # simple hello responce #
 		if msg_contains(&take, "hello")
-			{ msg_send(&mut client.write, "hello"); }
+			{ msg_send(&mut client.write, &client_data, "hello"); }
 	}
 }
 
 
 
-fn msg_send(s: &mut BufWriter<TcpStream>, msg: &str) {
+fn msg_send(s: &mut BufWriter<TcpStream>, cd :&irc_h::ClientData, msg: &str) {
 	s.write_all(format!("PRIVMSG {c} :{m}\r\n",
-		c = CHANNEL, m = msg).as_bytes()).unwrap();
+		c = cd.channel[0], m = msg).as_bytes()).unwrap();
 	s.flush().unwrap();
 }
 
@@ -55,27 +52,4 @@ fn msg_contains(s: &String, t: &str) -> bool {
 		return true;
 	}
 	else { return false; }
-}
-
-
-
-fn irc_new(url :&str) -> IRC {
-	let tcp = TcpStream::connect(url).unwrap();
-	let br = BufReader::new(tcp.try_clone().unwrap());
-	let bw = BufWriter::new(tcp.try_clone().unwrap());
-
-	let irc_out = IRC {
-		stream: tcp,
-		read: br,
-		write: bw
-	};
-
-	irc_out
-}
-
-fn irc_join(irc :&mut IRC) {
-	irc.write.write_all(format!("NICK {n}\r\n", n = NAME).as_bytes()).unwrap();
-	irc.write.write_all(format!("USER {n} {n} {n} :meow\r\n", n = NAME).as_bytes()).unwrap();
-	irc.write.write_all(format!("JOIN {c}\r\n", c = CHANNEL).as_bytes()).unwrap();
-	irc.write.flush();
 }
